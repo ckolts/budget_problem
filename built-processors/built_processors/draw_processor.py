@@ -2,20 +2,19 @@
 from datetime import datetime
 import requests
 
-# BASE_URL = 'http://localhost'
-
-
-BASE_URL = 'http://172.17.0.1'
+BUDGETS_URL = 'http://built-budgets'
+DRAWS_URL = 'http://built-draws/'
 
 
 class DrawProcessor:
-    def __init__(self, base_url=BASE_URL):
-        self.base_url = base_url
+    def __init__(self):
+        self.budgets_url = BUDGETS_URL
+        self.draws_url = DRAWS_URL
         self.budgets = dict()
         self.items = dict()
 
     def get_budgets(self) -> dict:
-        res = requests.get(f'{BASE_URL}:5001/budgets').json()
+        res = requests.get(f'{BUDGETS_URL}/budgets').json()
         budgets = dict()
         for budget in res:
             budget_id = budget.pop('budget_id')
@@ -23,7 +22,7 @@ class DrawProcessor:
         return budgets
 
     def get_budget_items(self) -> dict:
-        res = requests.get(f'{BASE_URL}:5001/items').json()
+        res = requests.get(f'{BUDGETS_URL}/items').json()
         items = dict()
         for item in res:
             item_id = item.pop('budget_item_id')
@@ -31,7 +30,7 @@ class DrawProcessor:
         return items
 
     def get_draw_requests(self) -> list:
-        return requests.get(f'{BASE_URL}:5002/requests').json()
+        return requests.get(f'{DRAWS_URL}/requests').json()
 
     def sort_draw_requests(self, draw_requests: list) -> list:
         def draw_request_key(req: dict) -> datetime:
