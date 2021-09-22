@@ -7,13 +7,16 @@ DRAWS_URL = 'http://built-draws/'
 
 
 class ServiceHelpers:
-    """Helper functions to retrieve data from built-service"""
-
     def __init__(self, budgets_url=BUDGETS_URL, draws_url=DRAWS_URL):
         self.budgets_url = budgets_url
         self.draws_url = draws_url
 
     def get_budgets(self) -> dict:
+        """Retrieves all budgets from built-budgets
+
+        :return: A mapping of all budget amounts and remaining balances mapped to a budget ID
+        :rtype: dict
+        """
         res = requests.get(f'{self.budgets_url}/budgets').json()
         budgets = dict()
         for budget in res:
@@ -22,6 +25,11 @@ class ServiceHelpers:
         return budgets
 
     def get_budget_items(self) -> dict:
+        """Retrieves all budget items from built-budgets
+
+        :return: A mapping of all budget items and funding info mapped to a budget item ID
+        :rtype: dict
+        """
         res = requests.get(f'{self.budgets_url}/items').json()
         items = dict()
         for item in res:
@@ -30,6 +38,11 @@ class ServiceHelpers:
         return items
 
     def get_draw_requests(self) -> list:
+        """Retrieves all outstanding draw requests from built-draws
+
+        :return: A list of all outstanding draw requests
+        :rtype: list
+        """
         return requests.get(f'{self.draws_url}/requests').json()
 
 
