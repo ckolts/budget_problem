@@ -54,8 +54,8 @@ class DrawProcessor:
 
     def handler(self) -> dict:
         """Handles processing a list of draw requests. Requests are processed in chronological order by effective date
-        and only if remaining funds are available in both an item's remaining funding and the item's corresponding
-        budget.
+        and only if funds are available in both an item's remaining funding and its corresponding budget's remaining
+        balance.
 
         :returns: A mapping of budget IDs to a list of processed draw request IDs
         :rtype: dict
@@ -72,11 +72,11 @@ class DrawProcessor:
             # obtain values from draw request
             amount = int(req.get('amount'))
             budget_id = req.get('budget_id')
-            budget = self.budgets[budget_id].get('balance_remaining')
+            budget_balance = self.budgets[budget_id].get('balance_remaining')
             req_id = req.get('draw_request_id')
 
             # process draw request if funds are available
-            if self.is_drawable(req) and amount <= budget:
+            if self.is_drawable(req) and amount <= budget_balance:
                 if processed_requests.get(budget_id, None):
                     processed_requests[budget_id].append(req_id)
                 else:
