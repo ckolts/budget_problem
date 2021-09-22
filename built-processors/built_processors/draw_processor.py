@@ -90,7 +90,7 @@ class DrawProcessor:
 
         :param req: draw request
         :type req: dict
-        :return: the request is drawable
+        :return: indication that the request is drawable
         :rtype: bool
         """
         item = self.items.get(req.get('budget_item_id'))
