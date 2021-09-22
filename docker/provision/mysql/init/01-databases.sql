@@ -1,0 +1,5 @@
+CREATE DATABASE IF NOT EXISTS `budgets`;
+CREATE DATABASE IF NOT EXISTS `draws`;
+
+CREATE USER 'built'@'%' IDENTIFIED BY 'password';
+GRANT ALL ON *.* TO 'built'@'%';
