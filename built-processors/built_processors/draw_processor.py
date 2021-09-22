@@ -6,15 +6,15 @@ BUDGETS_URL = 'http://built-budgets'
 DRAWS_URL = 'http://built-draws/'
 
 
-class DrawProcessor:
-    def __init__(self):
-        self.budgets_url = BUDGETS_URL
-        self.draws_url = DRAWS_URL
-        self.budgets = dict()
-        self.items = dict()
+class ServiceHelpers:
+    """Helper functions to retrieve data from built-service"""
+
+    def __init__(self, budgets_url=BUDGETS_URL, draws_url=DRAWS_URL):
+        self.budgets_url = budgets_url
+        self.draws_url = draws_url
 
     def get_budgets(self) -> dict:
-        res = requests.get(f'{BUDGETS_URL}/budgets').json()
+        res = requests.get(f'{self.budgets_url}/budgets').json()
         budgets = dict()
         for budget in res:
             budget_id = budget.pop('budget_id')
@@ -22,7 +22,7 @@ class DrawProcessor:
         return budgets
 
     def get_budget_items(self) -> dict:
-        res = requests.get(f'{BUDGETS_URL}/items').json()
+        res = requests.get(f'{self.budgets_url}/items').json()
         items = dict()
         for item in res:
             item_id = item.pop('budget_item_id')
@@ -30,26 +30,27 @@ class DrawProcessor:
         return items
 
     def get_draw_requests(self) -> list:
-        return requests.get(f'{DRAWS_URL}/requests').json()
+        return requests.get(f'{self.draws_url}/requests').json()
 
-    def sort_draw_requests(self, draw_requests: list) -> list:
-        def draw_request_key(req: dict) -> datetime:
-            return datetime.strptime(req.get('effective_date'), '%m/%d/%Y')
 
-        draw_requests.sort(key=draw_request_key)
-        return draw_requests
-
-    def is_drawable(self, req: dict) -> bool:
-        item = self.items.get(req.get('budget_item_id'))
-        amount_requested = int(req.get('amount'))
-        drawable_amount = int(item.get('original_amount')) - int(item.get('funded_to_date'))
-        return amount_requested <= drawable_amount
+class DrawProcessor:
+    def __init__(self):
+        self.budgets = dict()
+        self.items = dict()
+        self.service = ServiceHelpers()
 
     def handler(self) -> dict:
+        """Handles processing a list of draw requests. Requests are processed in chronological order by effective date
+        and only if remaining funds are available in both an item's remaining funding and the item's corresponding
+        budget.
+
+        :returns: A mapping of budget IDs to a list of processed draw request IDs
+        :rtype: dict
+        """
         # retrieve values from services
-        self.budgets = self.get_budgets()
-        self.items = self.get_budget_items()
-        _draw_requests = self.get_draw_requests()
+        self.budgets = self.service.get_budgets()
+        self.items = self.service.get_budget_items()
+        _draw_requests = self.service.get_draw_requests()
         draw_requests = self.sort_draw_requests(_draw_requests)
 
         # process draw requests
@@ -70,6 +71,35 @@ class DrawProcessor:
                 self.budgets[budget_id]['balance_remaining'] -= amount
 
         return processed_requests
+
+    def is_drawable(self, req: dict) -> bool:
+        """Determines if a draw request is drawable based on its remaining funding.
+
+        :param req: draw request
+        :type req: dict
+        :return: the request is drawable
+        :rtype: bool
+        """
+        item = self.items.get(req.get('budget_item_id'))
+        amount_requested = int(req.get('amount'))
+        drawable_amount = int(item.get('original_amount')) - int(item.get('funded_to_date'))
+        return amount_requested <= drawable_amount
+
+    @staticmethod
+    def sort_draw_requests(draw_requests: list) -> list:
+        """Sorts a list of draw requests by date.
+
+        :param draw_requests: list of draw requests
+        :type draw_requests: list
+        :return: sorted list of draw requests
+        :rtype: list
+        """
+
+        def draw_request_key(req: dict) -> datetime:
+            return datetime.strptime(req.get('effective_date'), '%m/%d/%Y')
+
+        draw_requests.sort(key=draw_request_key)
+        return draw_requests
 
 
 if __name__ == '__main__':

@@ -81,9 +81,9 @@ class DrawProcessorTestCase(unittest.TestCase):
                 "draw_request_id": 20,
                 "effective_date": "11/20/2015"
             }]
-        self.processor.get_budgets = MagicMock(return_value=resp_budgets)
-        self.processor.get_budget_items = MagicMock(return_value=resp_budget_items)
-        self.processor.get_draw_requests = MagicMock(return_value=resp_draw_requests)
+        self.processor.service.get_budgets = MagicMock(return_value=resp_budgets)
+        self.processor.service.get_budget_items = MagicMock(return_value=resp_budget_items)
+        self.processor.service.get_draw_requests = MagicMock(return_value=resp_draw_requests)
         result = self.processor.handler()
         expected = {1: [10, 20]}
         self.assertEqual(expected, result)
@@ -117,9 +117,9 @@ class DrawProcessorTestCase(unittest.TestCase):
                 "draw_request_id": 20,
                 "effective_date": "11/20/2015"
             }]
-        self.processor.get_budgets = MagicMock(return_value=resp_budgets)
-        self.processor.get_budget_items = MagicMock(return_value=resp_budget_items)
-        self.processor.get_draw_requests = MagicMock(return_value=resp_draw_requests)
+        self.processor.service.get_budgets = MagicMock(return_value=resp_budgets)
+        self.processor.service.get_budget_items = MagicMock(return_value=resp_budget_items)
+        self.processor.service.get_draw_requests = MagicMock(return_value=resp_draw_requests)
         result = self.processor.handler()
         expected = {1: [20]}
         self.assertEqual(expected, result)
@@ -153,9 +153,9 @@ class DrawProcessorTestCase(unittest.TestCase):
                 "draw_request_id": 20,
                 "effective_date": "11/20/2015"
             }]
-        self.processor.get_budgets = MagicMock(return_value=resp_budgets)
-        self.processor.get_budget_items = MagicMock(return_value=resp_budget_items)
-        self.processor.get_draw_requests = MagicMock(return_value=resp_draw_requests)
+        self.processor.service.get_budgets = MagicMock(return_value=resp_budgets)
+        self.processor.service.get_budget_items = MagicMock(return_value=resp_budget_items)
+        self.processor.service.get_draw_requests = MagicMock(return_value=resp_draw_requests)
         result = self.processor.handler()
         expected = {1: [10]}
         self.assertEqual(expected, result)
@@ -215,9 +215,9 @@ class DrawProcessorTestCase(unittest.TestCase):
                 "effective_date": "11/20/2015"
             },
         ]
-        self.processor.get_budgets = MagicMock(return_value=resp_budgets)
-        self.processor.get_budget_items = MagicMock(return_value=resp_budget_items)
-        self.processor.get_draw_requests = MagicMock(return_value=resp_draw_requests)
+        self.processor.service.get_budgets = MagicMock(return_value=resp_budgets)
+        self.processor.service.get_budget_items = MagicMock(return_value=resp_budget_items)
+        self.processor.service.get_draw_requests = MagicMock(return_value=resp_draw_requests)
         result = self.processor.handler()
         expected = {1: [10, 20], 2: [40]}
         self.assertEqual(expected, result)
