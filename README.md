@@ -2,7 +2,7 @@
 
 To get started:
 * Create a GitHub repository
-* Invite builtschlegel, as a collaborator
+* Add the following as collaborators to your Github: @BFreeNashville, @ronnielankford, @JoshCrosby
 * Dig in!
 
 # Background
